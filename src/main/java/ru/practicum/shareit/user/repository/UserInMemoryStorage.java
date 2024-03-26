@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EmailAlreadyExists;
 import ru.practicum.shareit.exceptions.InputDataErrorException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.utils.ValidateUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,33 +18,11 @@ public class UserInMemoryStorage implements UserStorage {
 
     private long id = 0;
     private final static Map<Long, UserDto> userStorage = new HashMap<>();
-
-    private boolean isEmailExists(String email) {
-        for (UserDto i : getAllUsers()) {
-            if (i.getEmail().equals(email)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isMailPatternValid(String email) {
-        String emailPattern = "^[a-zA-Z0-9._%-]+@[a-zA-Z]+\\.[a-zA-Z]{2,3}$";
-        return !email.matches(emailPattern);
-    }
-
-    private void validateUser(UserDto userDto) {
-        if (isEmailExists(userDto.getEmail())) {
-            throw new EmailAlreadyExists("this email address is already registered in the database");
-        }
-        if (isMailPatternValid(userDto.getEmail())) {
-            throw new InputDataErrorException("Email does not match the pattern");
-        }
-    }
+    private final ValidateUser validateUser = new ValidateUser();
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        validateUser(userDto);
+        validateUser.validateUser(userDto, getAllUsers());
 
         id++;
         userDto.setId(id);
@@ -61,7 +40,7 @@ public class UserInMemoryStorage implements UserStorage {
             throw new InputDataErrorException("User not found");
         }
 
-        if (isEmailExists(userDto.getEmail()) && !existingUser.getEmail().equals(userDto.getEmail())) {
+        if (validateUser.isEmailExists(userDto.getEmail(), getAllUsers()) && !existingUser.getEmail().equals(userDto.getEmail())) {
             throw new EmailAlreadyExists("Email already exists");
         }
 
