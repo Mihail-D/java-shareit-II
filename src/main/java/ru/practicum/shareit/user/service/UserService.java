@@ -20,4 +20,8 @@ public class UserService {
     public User updateUser(long userId, User user) {
         return userStorage.updateUser(userId, user);
     }
+
+    public User getUserById(long userId) {
+        return userStorage.getUserById(userId);
+    }
 }

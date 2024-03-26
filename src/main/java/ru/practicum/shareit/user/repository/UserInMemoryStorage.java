@@ -50,12 +50,13 @@ public class UserInMemoryStorage implements UserStorage {
             existingUser.setEmail(user.getEmail());
         }
 
-        userStorage.remove(userId);
+        //userStorage.remove(userId);
         userStorage.put(userId, existingUser);
 
         return existingUser;
     }
 
+    @Override
     public User getUserById(long id) {
         return userStorage.values().stream()
                 .filter(user -> user.getId() == id)

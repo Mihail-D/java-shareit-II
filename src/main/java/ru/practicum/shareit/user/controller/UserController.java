@@ -25,4 +25,9 @@ public class UserController {
     public User updateUser(@Valid @PathVariable long userId, @RequestBody User user) {
         return userService.updateUser(userId, user);
     }
+
+    @GetMapping("/{userId}")
+    public User getUserById(@Valid @PathVariable long userId) {
+        return userService.getUserById(userId);
+    }
 }
