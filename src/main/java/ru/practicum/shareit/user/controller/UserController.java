@@ -5,6 +5,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -29,5 +30,15 @@ public class UserController {
     @GetMapping("/{userId}")
     public User getUserById(@Valid @PathVariable long userId) {
         return userService.getUserById(userId);
+    }
+
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable long userId) {
+        userService.deleteUser(userId);
+    }
+
+    @GetMapping()
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 }

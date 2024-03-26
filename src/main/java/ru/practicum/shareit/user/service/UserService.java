@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserStorage;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -23,5 +25,13 @@ public class UserService {
 
     public User getUserById(long userId) {
         return userStorage.getUserById(userId);
+    }
+
+    public void deleteUser(long userId) {
+        userStorage.deleteUser(userId);
+    }
+
+    public List<User> getAllUsers() {
+        return userStorage.getAllUsers();
     }
 }

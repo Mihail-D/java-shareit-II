@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EmailAlreadyExists;
 import ru.practicum.shareit.exceptions.InputDataErrorException;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.utils.UserValidator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,9 +18,32 @@ public class UserInMemoryStorage implements UserStorage {
     private long id = 0;
     private final static Map<Long, User> userStorage = new HashMap<>();
 
+    private boolean isEmailExists(String email) {
+        for (User i : getAllUsers()) {
+            if (i.getEmail().equals(email)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isMailPatternValid(String email) {
+        String emailPattern = "^[a-zA-Z0-9._%-]+@[a-zA-Z]+\\.[a-zA-Z]{2,3}$";
+        return !email.matches(emailPattern);
+    }
+
+    private void validateUser(User user) {
+        if (isEmailExists(user.getEmail())) {
+            throw new EmailAlreadyExists("this email address is already registered in the database");
+        }
+        if (isMailPatternValid(user.getEmail())) {
+            throw new InputDataErrorException("Email does not match the pattern");
+        }
+    }
+
     @Override
     public User createUser(User user) {
-        UserValidator.validateUser(user);
+        validateUser(user);
 
         id++;
         user.setId(id);
@@ -39,7 +61,7 @@ public class UserInMemoryStorage implements UserStorage {
             throw new InputDataErrorException("User not found");
         }
 
-        if (UserValidator.isEmailExists(user.getEmail()) && !existingUser.getEmail().equals(user.getEmail())) {
+        if (isEmailExists(user.getEmail()) && !existingUser.getEmail().equals(user.getEmail())) {
             throw new EmailAlreadyExists("Email already exists");
         }
 
@@ -50,7 +72,6 @@ public class UserInMemoryStorage implements UserStorage {
             existingUser.setEmail(user.getEmail());
         }
 
-        //userStorage.remove(userId);
         userStorage.put(userId, existingUser);
 
         return existingUser;
@@ -64,7 +85,13 @@ public class UserInMemoryStorage implements UserStorage {
                 .orElse(null);
     }
 
-    public static List<User> getAllUsers() {
+    @Override
+    public void deleteUser(long id) {
+        userStorage.remove(id);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
         return new ArrayList<>(userStorage.values());
     }
 }
