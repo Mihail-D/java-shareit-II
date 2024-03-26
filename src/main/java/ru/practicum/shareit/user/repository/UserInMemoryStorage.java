@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EmailAlreadyExists;
 import ru.practicum.shareit.exceptions.InputDataErrorException;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,10 +16,10 @@ import java.util.Map;
 public class UserInMemoryStorage implements UserStorage {
 
     private long id = 0;
-    private final static Map<Long, User> userStorage = new HashMap<>();
+    private final static Map<Long, UserDto> userStorage = new HashMap<>();
 
     private boolean isEmailExists(String email) {
-        for (User i : getAllUsers()) {
+        for (UserDto i : getAllUsers()) {
             if (i.getEmail().equals(email)) {
                 return true;
             }
@@ -32,44 +32,44 @@ public class UserInMemoryStorage implements UserStorage {
         return !email.matches(emailPattern);
     }
 
-    private void validateUser(User user) {
-        if (isEmailExists(user.getEmail())) {
+    private void validateUser(UserDto userDto) {
+        if (isEmailExists(userDto.getEmail())) {
             throw new EmailAlreadyExists("this email address is already registered in the database");
         }
-        if (isMailPatternValid(user.getEmail())) {
+        if (isMailPatternValid(userDto.getEmail())) {
             throw new InputDataErrorException("Email does not match the pattern");
         }
     }
 
     @Override
-    public User createUser(User user) {
-        validateUser(user);
+    public UserDto createUser(UserDto userDto) {
+        validateUser(userDto);
 
         id++;
-        user.setId(id);
+        userDto.setId(id);
 
-        userStorage.put(user.getId(), user);
+        userStorage.put(userDto.getId(), userDto);
 
-        return user;
+        return userDto;
     }
 
     @Override
-    public User updateUser(long userId, User user) {
-        User existingUser = getUserById(userId);
+    public UserDto updateUser(long userId, UserDto userDto) {
+        UserDto existingUser = getUserById(userId);
 
         if (existingUser == null) {
             throw new InputDataErrorException("User not found");
         }
 
-        if (isEmailExists(user.getEmail()) && !existingUser.getEmail().equals(user.getEmail())) {
+        if (isEmailExists(userDto.getEmail()) && !existingUser.getEmail().equals(userDto.getEmail())) {
             throw new EmailAlreadyExists("Email already exists");
         }
 
-        if (user.getName() != null) {
-            existingUser.setName(user.getName());
+        if (userDto.getName() != null) {
+            existingUser.setName(userDto.getName());
         }
-        if (user.getEmail() != null) {
-            existingUser.setEmail(user.getEmail());
+        if (userDto.getEmail() != null) {
+            existingUser.setEmail(userDto.getEmail());
         }
 
         userStorage.put(userId, existingUser);
@@ -78,11 +78,8 @@ public class UserInMemoryStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(long id) {
-        return userStorage.values().stream()
-                .filter(user -> user.getId() == id)
-                .findFirst()
-                .orElse(null);
+    public UserDto getUserById(long id) {
+        return userStorage.get(id);
     }
 
     @Override
@@ -91,7 +88,7 @@ public class UserInMemoryStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return new ArrayList<>(userStorage.values());
     }
 }
