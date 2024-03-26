@@ -1,9 +1,6 @@
 package ru.practicum.shareit.user.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -22,5 +19,10 @@ public class UserController {
     @PostMapping()
     public User createUser(@Valid @RequestBody User user) {
         return userService.createUser(user);
+    }
+
+    @PatchMapping("/{userId}")
+    public User updateUser(@Valid @PathVariable long userId, @RequestBody User user) {
+        return userService.updateUser(userId, user);
     }
 }

@@ -13,6 +13,7 @@ public class User {
 
     @NotBlank
     private String name;
+
     @NotBlank
     @Email
     private String email;
@@ -31,17 +32,13 @@ public class User {
         if (getId() != user.getId()) {
             return false;
         }
-        if (!getName().equals(user.getName())) {
-            return false;
-        }
-        return getEmail().equals(user.getEmail());
+        return getName().equals(user.getName());
     }
 
     @Override
     public int hashCode() {
         int result = (int) (getId() ^ (getId() >>> 32));
         result = 31 * result + getName().hashCode();
-        result = 31 * result + getEmail().hashCode();
         return result;
     }
 }
