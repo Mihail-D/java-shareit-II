@@ -20,6 +20,8 @@ public class UserInMemoryStorage implements UserStorage {
     private final static Map<Long, UserDto> userStorage = new HashMap<>();
     private final ValidateUser validateUser = new ValidateUser();
 
+    //TODO изменить тип объектов в методах создания и сохранения данных
+
     @Override
     public UserDto createUser(UserDto userDto) {
         validateUser.validateUser(userDto, getAllUsers());
@@ -32,15 +34,20 @@ public class UserInMemoryStorage implements UserStorage {
         return userDto;
     }
 
+    //TODO изменить тип объектов в методах создания и сохранения данных
+
     @Override
     public UserDto updateUser(long userId, UserDto userDto) {
         UserDto existingUser = getUserById(userId);
+
+        //TODO изменить тип исключения
 
         if (existingUser == null) {
             throw new InputDataErrorException("User not found");
         }
 
-        if (validateUser.isEmailExists(userDto.getEmail(), getAllUsers()) && !existingUser.getEmail().equals(userDto.getEmail())) {
+        if (validateUser.isEmailExists(userDto.getEmail(), getAllUsers())
+                && !existingUser.getEmail().equals(userDto.getEmail())) {
             throw new EmailAlreadyExists("Email already exists");
         }
 

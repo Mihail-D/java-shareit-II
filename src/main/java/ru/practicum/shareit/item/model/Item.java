@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.model;
 import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,17 +16,18 @@ public class Item {
 
     @NotBlank
     private String name;
+
     @NotBlank
+    private User owner;
 
-    private String owner;
-
-
+    @NotBlank
     private String description;
 
     @NotNull
     private ItemRequest request;
 
-    private boolean available;
+    @NotNull
+    private Boolean available;
 
     @Override
     public boolean equals(Object o) {
@@ -41,19 +43,19 @@ public class Item {
         if (getId() != item.getId()) {
             return false;
         }
-        if (isAvailable() != item.isAvailable()) {
-            return false;
-        }
         if (!getName().equals(item.getName())) {
             return false;
         }
         if (!getOwner().equals(item.getOwner())) {
             return false;
         }
-        if (getDescription() != null ? !getDescription().equals(item.getDescription()) : item.getDescription() != null) {
+        if (!getDescription().equals(item.getDescription())) {
             return false;
         }
-        return getRequest() != null ? getRequest().equals(item.getRequest()) : item.getRequest() == null;
+        if (!getRequest().equals(item.getRequest())) {
+            return false;
+        }
+        return getAvailable().equals(item.getAvailable());
     }
 
     @Override
@@ -61,9 +63,9 @@ public class Item {
         int result = (int) (getId() ^ (getId() >>> 32));
         result = 31 * result + getName().hashCode();
         result = 31 * result + getOwner().hashCode();
-        result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
-        result = 31 * result + (getRequest() != null ? getRequest().hashCode() : 0);
-        result = 31 * result + (isAvailable() ? 1 : 0);
+        result = 31 * result + getDescription().hashCode();
+        result = 31 * result + getRequest().hashCode();
+        result = 31 * result + getAvailable().hashCode();
         return result;
     }
 }

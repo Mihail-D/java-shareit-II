@@ -5,22 +5,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class ItemDto {
 
-    @NotNull
-    private long requestId;
+    private long id;
 
     @NotBlank
     private String name;
 
     private String description;
 
-    @NotNull
     private boolean available;
 
 }
