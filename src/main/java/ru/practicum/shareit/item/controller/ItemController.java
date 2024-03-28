@@ -27,9 +27,11 @@ public class ItemController {
     public Item createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody Item item) {
 
         if (validateItem.isUserIdNotNull(userId)) {
+
             throw new SharerUserIdException("missing userId parameter in request header");
         }
-        if (!validateItem.isUserIdUnknown(userId)) {
+        if (validateItem.isUserIdUnknown(userId)) {
+
             throw new UserNotFoundException("user not found");
         }
 

@@ -1,9 +1,12 @@
 package ru.practicum.shareit.item.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.exceptions.ItemDataInputErrorException;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemInMemoryStorage;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.repository.UserStorage;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,26 +15,52 @@ import java.util.Optional;
 @Component
 public class ValidateItem {
 
+    UserStorage userStorage;
+
+    @Autowired
+    public ValidateItem(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
+
     public boolean isUserIdNotNull(Long userId) {
         return userId == null;
     }
 
     public boolean isUserIdUnknown(long userId) {
-        List<Item> userIds = ItemInMemoryStorage.getUsersId();
+        List<UserDto> userIds = userStorage.getAllUsers();
 
-        if (userIds.isEmpty()) {
-            return true;
-        }
-
-        Optional<Item> itemOptional = userIds.stream()
+        Optional<UserDto> userOptional = userIds.stream()
                 .filter(i -> userId == i.getId())
                 .findFirst();
 
-        return itemOptional.isEmpty();
+        return userOptional.isEmpty();
     }
 
     public boolean isItemAvailable(Item item) {
         Boolean isAvailable = item.getAvailable();
         return isAvailable == null;
     }
+
+    public boolean isItemNameEmpty(Item item) {
+        return item.getName().isEmpty();
+    }
+
+    public boolean isDescriptionEmpty(Item item) {
+        return item.getDescription() == null;
+    }
+
+    public void validateItem(Item item) {
+        if (isItemAvailable(item)) {
+            throw new ItemDataInputErrorException("item availability status is missing");
+        }
+
+        if (isItemNameEmpty(item)) {
+            throw new ItemDataInputErrorException("item name cannot be empty");
+        }
+
+        if (isDescriptionEmpty(item)) {
+            throw new ItemDataInputErrorException("item description cannot be empty");
+        }
+    }
+
 }
