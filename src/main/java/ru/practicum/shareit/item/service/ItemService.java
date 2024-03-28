@@ -15,7 +15,11 @@ public class ItemService {
         this.itemStorage = itemStorage;
     }
 
-    public Item createItem(Item item) {
-        return itemStorage.createItem(item);
+    public Item createItem(long ownerId, Item item) {
+        return itemStorage.createItem(ownerId, item);
+    }
+
+    public Item updateItem(long ownerId, long itemId, Item item) {
+        return itemStorage.updateItem(ownerId, itemId, item);
     }
 }

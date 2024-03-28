@@ -6,7 +6,7 @@ import ru.practicum.shareit.exceptions.EmailAlreadyExists;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.utils.ValidateUser;
+import ru.practicum.shareit.user.utils.ValidateUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;

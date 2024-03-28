@@ -4,6 +4,7 @@ import ru.practicum.shareit.item.model.Item;
 
 public interface ItemStorage {
 
-    Item createItem(Item item);
+    Item createItem(long ownerId, Item item);
 
+    Item updateItem(long userId, long itemId, Item item);
 }

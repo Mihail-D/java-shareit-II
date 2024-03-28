@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exceptions.ItemDataInputErrorException;
+import ru.practicum.shareit.exceptions.SharerUserIdException;
+import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.repository.UserStorage;
@@ -49,7 +51,15 @@ public class ValidateItem {
         return item.getDescription() == null;
     }
 
-    public void validateItem(Item item) {
+    public void validateItemForCreate(long ownerId, Item item) {
+        if (isUserIdNotNull(ownerId)) {
+            throw new SharerUserIdException("missing userId parameter in request header");
+        }
+
+        if (isUserIdUnknown(ownerId)) {
+            throw new UserNotFoundException("user not found");
+        }
+
         if (isItemAvailable(item)) {
             throw new ItemDataInputErrorException("item availability status is missing");
         }
@@ -63,4 +73,29 @@ public class ValidateItem {
         }
     }
 
+    public void validateItemForUpdate(long ownerId, Item existingItem, Item item) {
+        if (isUserIdNotNull(ownerId)) {
+            throw new SharerUserIdException("missing userId parameter in request header");
+        }
+
+        if (isUserIdUnknown(ownerId)) {
+            throw new UserNotFoundException("user not found");
+        }
+
+       /* if (item.getAvailable() != null) {
+            existingItem.setAvailable(item.getAvailable());
+        }
+
+        if (item.getName() != null) {
+            existingItem.setName(item.getName());
+        }
+
+        if (item.getDescription() != null) {
+            existingItem.setDescription(item.getDescription());
+        }*/
+
+        if (existingItem.getOwner().getId() != ownerId) {
+            throw new UserNotFoundException("the current and new owners of the item do not match");
+        }
+    }
 }
