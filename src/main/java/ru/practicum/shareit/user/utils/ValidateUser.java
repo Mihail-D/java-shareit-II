@@ -1,4 +1,4 @@
-package ru.practicum.shareit.utils;
+package ru.practicum.shareit.user.utils;
 
 import ru.practicum.shareit.exceptions.EmailAlreadyExists;
 import ru.practicum.shareit.exceptions.InputDataErrorException;
