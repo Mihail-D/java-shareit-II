@@ -3,7 +3,7 @@ package ru.practicum.shareit.user.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EmailAlreadyExists;
-import ru.practicum.shareit.exceptions.InputDataErrorException;
+import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.utils.ValidateUser;
 
@@ -40,10 +40,8 @@ public class UserInMemoryStorage implements UserStorage {
     public UserDto updateUser(long userId, UserDto userDto) {
         UserDto existingUser = getUserById(userId);
 
-        //TODO изменить тип исключения
-
         if (existingUser == null) {
-            throw new InputDataErrorException("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
         if (validateUser.isEmailExists(userDto.getEmail(), getAllUsers())
