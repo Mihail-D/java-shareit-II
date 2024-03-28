@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EmailAlreadyExists;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.utils.ValidateUser;
 
 import java.util.ArrayList;
@@ -17,43 +18,39 @@ import java.util.Map;
 public class UserInMemoryStorage implements UserStorage {
 
     private long id = 0;
-    private final static Map<Long, UserDto> userStorage = new HashMap<>();
+    private final static Map<Long, User> userStorage = new HashMap<>();
     private final ValidateUser validateUser = new ValidateUser();
 
-    //TODO изменить тип объектов в методах создания и сохранения данных
-
     @Override
-    public UserDto createUser(UserDto userDto) {
-        validateUser.validateUser(userDto, getAllUsers());
+    public User createUser(User user) {
+        validateUser.validateUser(user, getAllUsers());
 
         id++;
-        userDto.setId(id);
+        user.setId(id);
 
-        userStorage.put(userDto.getId(), userDto);
+        userStorage.put(user.getId(), user);
 
-        return userDto;
+        return user;
     }
 
-    //TODO изменить тип объектов в методах создания и сохранения данных
-
     @Override
-    public UserDto updateUser(long userId, UserDto userDto) {
-        UserDto existingUser = getUserById(userId);
+    public User updateUser(long userId, User user) {
+        User existingUser = userStorage.get(userId);
 
         if (existingUser == null) {
             throw new UserNotFoundException("User not found");
         }
 
-        if (validateUser.isEmailExists(userDto.getEmail(), getAllUsers())
-                && !existingUser.getEmail().equals(userDto.getEmail())) {
+        if (validateUser.isEmailExists(user.getEmail(), getAllUsers())
+                && !existingUser.getEmail().equals(user.getEmail())) {
             throw new EmailAlreadyExists("Email already exists");
         }
 
-        if (userDto.getName() != null) {
-            existingUser.setName(userDto.getName());
+        if (user.getName() != null) {
+            existingUser.setName(user.getName());
         }
-        if (userDto.getEmail() != null) {
-            existingUser.setEmail(userDto.getEmail());
+        if (user.getEmail() != null) {
+            existingUser.setEmail(user.getEmail());
         }
 
         userStorage.put(userId, existingUser);
@@ -63,7 +60,11 @@ public class UserInMemoryStorage implements UserStorage {
 
     @Override
     public UserDto getUserById(long id) {
-        return userStorage.get(id);
+        User user = userStorage.get(id);
+        if (user == null) {
+            return null;
+        }
+        return userToDto(user);
     }
 
     @Override
@@ -73,6 +74,14 @@ public class UserInMemoryStorage implements UserStorage {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return new ArrayList<>(userStorage.values());
+        List<UserDto> userDtoList = new ArrayList<>();
+        for (User user : userStorage.values()) {
+            userDtoList.add(userToDto(user));
+        }
+        return userDtoList;
+    }
+
+    private UserDto userToDto(User user) {
+        return new UserDto(user.getId(), user.getName(), user.getEmail());
     }
 }
