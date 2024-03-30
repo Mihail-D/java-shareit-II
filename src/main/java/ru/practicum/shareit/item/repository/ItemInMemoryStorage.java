@@ -29,7 +29,6 @@ public class ItemInMemoryStorage implements ItemStorage {
 
         validateItem.validateItemForCreate(ownerId, item);
 
-
         id++;
         item.setId(id);
 
@@ -47,7 +46,7 @@ public class ItemInMemoryStorage implements ItemStorage {
 
         Item existingItem = itemStorage.get(itemId);
 
-        validateItem.validateItemForUpdate(ownerId, existingItem, item);
+        validateItem.validateItemForUpdate(ownerId, existingItem);
 
         if (item.getAvailable() != null) {
             existingItem.setAvailable(item.getAvailable());
@@ -60,7 +59,7 @@ public class ItemInMemoryStorage implements ItemStorage {
         }
 
         itemStorage.put(existingItem.getId(), existingItem);
-        log.warn("!!!!!! itemStorage size =" + itemStorage.size());
+
         return existingItem;
     }
 
@@ -82,4 +81,24 @@ public class ItemInMemoryStorage implements ItemStorage {
         return Optional.of(itemsList);
     }
 
+    @Override
+    public Optional<List<ItemDto>> getItemByText(String text) {
+        List<ItemDto> itemsList = new ArrayList<>();
+
+        if (text.isBlank()) {
+            return Optional.of(itemsList);
+        }
+
+        for (Item i : itemStorage.values()) {
+            if (!i.getAvailable()) {
+                continue;
+            }
+            if (i.getName().toLowerCase().contains(text.toLowerCase())
+                    || i.getDescription().toLowerCase().contains(text.toLowerCase())) {
+                itemsList.add(ItemMapper.toItemDto(i));
+            }
+        }
+
+        return Optional.of(itemsList);
+    }
 }

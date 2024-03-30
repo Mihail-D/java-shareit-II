@@ -73,7 +73,7 @@ public class ValidateItem {
         }
     }
 
-    public void validateItemForUpdate(long ownerId, Item existingItem, Item item) {
+    public void validateItemForUpdate(long ownerId, Item existingItem) {
         if (isUserIdNotNull(ownerId)) {
             throw new SharerUserIdException("missing userId parameter in request header");
         }
@@ -86,8 +86,4 @@ public class ValidateItem {
             throw new UserNotFoundException("the current and new owners of the item do not match");
         }
     }
-/*
-    public boolean isItemFieldsExists(Item item) {
-        return !item.getName().isEmpty() && item.getDescription() != null && item.getAvailable() != null;
-    }*/
 }

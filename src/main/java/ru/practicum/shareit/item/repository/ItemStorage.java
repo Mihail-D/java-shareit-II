@@ -15,4 +15,6 @@ public interface ItemStorage {
     Optional<ItemDto> getItemById(long itemId);
 
     Optional<List<ItemDto>> getItemsByUserId(long userId);
+
+    Optional<List<ItemDto>> getItemByText(String str);
 }

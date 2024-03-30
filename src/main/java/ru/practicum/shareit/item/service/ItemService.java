@@ -34,4 +34,8 @@ public class ItemService {
     public Optional<List<ItemDto>> getItemsByUserId(long userId) {
         return itemStorage.getItemsByUserId(userId);
     }
+
+    public Optional<List<ItemDto>> getItemByText(String text) {
+        return itemStorage.getItemByText(text);
+    }
 }

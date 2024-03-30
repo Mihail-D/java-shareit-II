@@ -45,4 +45,9 @@ public class ItemController {
     public Optional<List<ItemDto>> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.getItemsByUserId(userId);
     }
+
+    @GetMapping("/search")
+    public Optional<List<ItemDto>> getItemByText(@RequestParam("text") String text) {
+        return itemService.getItemByText(text);
+    }
 }
