@@ -18,7 +18,7 @@ import java.util.Map;
 public class UserInMemoryStorage implements UserStorage {
 
     private long id = 0;
-    private final static Map<Long, User> userStorage = new HashMap<>();
+    private final Map<Long, User> userStorage = new HashMap<>();
     private final ValidateUser validateUser = new ValidateUser();
 
     @Override
