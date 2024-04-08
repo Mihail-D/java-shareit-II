@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,15 +14,15 @@ import javax.validation.constraints.NotBlank;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     @Column(name="id")
     private long id;
 
-    @Column(name="name")
+    @Column(name = "name", nullable = false)
     @NotBlank
     private String name;
 
-    @Column(name="email")
+    @Column(name = "email", unique = true)
     @NotBlank
     @Email
     private String email;

@@ -23,10 +23,10 @@ public class UserController {
         return userService.createUser(user);
     }
 
-/*    @PatchMapping("/{userId}")
+    @PatchMapping("/{userId}")
     public User updateUser(@Valid @PathVariable long userId, @RequestBody User user) {
         return userService.updateUser(userId, user);
-    }*/
+    }
 
     /*@GetMapping("/{userId}")
     public UserDto getUserById(@Valid @PathVariable long userId) {
