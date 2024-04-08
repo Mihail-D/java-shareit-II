@@ -30,10 +30,22 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
+    public Item updateItem(long ownerId, long itemId, Item item) {
+        Item existingItem = itemRepository.getReferenceById(itemId);
+        validateItem.validateItemForUpdate(ownerId, existingItem);
 
-    /*public Item updateItem(long ownerId, long itemId, Item item) {
-        return itemStorage.updateItem(ownerId, itemId, item);
-    }*/
+        if (item.getAvailable() != null) {
+            existingItem.setAvailable(item.getAvailable());
+        }
+        if (item.getName() != null) {
+            existingItem.setName(item.getName());
+        }
+        if (item.getDescription() != null) {
+            existingItem.setDescription(item.getDescription());
+        }
+
+        return itemRepository.save(existingItem);
+    }
 
    /* public Optional<List<ItemDto>> getItemsByUserId(long userId) {
         return itemStorage.getItemsByUserId(userId);

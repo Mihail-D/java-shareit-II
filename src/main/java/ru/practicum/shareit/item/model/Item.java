@@ -32,8 +32,6 @@ public class Item {
     @NotBlank
     private String description;
 
-
-    //@Transient
     @Column(name = "request_id")
     private long request;
 

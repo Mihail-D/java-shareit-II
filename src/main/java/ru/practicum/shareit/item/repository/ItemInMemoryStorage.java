@@ -46,9 +46,9 @@ public class ItemInMemoryStorage {
 
         Item existingItem = itemStorage.get(itemId);
 
-        validateItem.validateItemForUpdate(ownerId, existingItem);
+        //validateItem.validateItemForUpdate(ownerId, existingItem);
 
-        if (item.getAvailable() != null) {
+        /*if (item.getAvailable() != null) {
             existingItem.setAvailable(item.getAvailable());
         }
         if (item.getName() != null) {
@@ -56,7 +56,7 @@ public class ItemInMemoryStorage {
         }
         if (item.getDescription() != null) {
             existingItem.setDescription(item.getDescription());
-        }
+        }*/
 
         itemStorage.put(existingItem.getId(), existingItem);
 
