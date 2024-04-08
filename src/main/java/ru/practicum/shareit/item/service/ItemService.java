@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.utils.ValidateItem;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -38,7 +40,6 @@ public class ItemService {
         Item existingItem = itemRepository.getReferenceById(itemId);
         validateItem.validateItemForUpdate(ownerId, existingItem);
 
-
         if (item.getAvailable() != null) {
             existingItem.setAvailable(item.getAvailable());
         }
@@ -56,9 +57,17 @@ public class ItemService {
         return Optional.of(ItemMapper.toItemDto(itemRepository.getReferenceById(itemId)));
     }
 
-   /* public Optional<List<ItemDto>> getItemsByUserId(long userId) {
-        return itemStorage.getItemsByUserId(userId);
-    }*/
+    public Optional<List<ItemDto>> getItemsByUserId(long userId) {
+        List<ItemDto> itemsList = new ArrayList<>();
+
+        for (Item i : itemRepository.findAll()) {
+            if (i.getOwnerId() == userId) {
+                itemsList.add(ItemMapper.toItemDto(i));
+            }
+        }
+
+        return Optional.of(itemsList);
+    }
 
 /*    public Optional<List<ItemDto>> getItemByText(String text) {
         return itemStorage.getItemByText(text);

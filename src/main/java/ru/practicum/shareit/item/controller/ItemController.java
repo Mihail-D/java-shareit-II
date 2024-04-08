@@ -7,6 +7,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -42,10 +43,10 @@ public class ItemController {
         return itemService.getItemById(itemId);
     }
 
-    /* @GetMapping()
+     @GetMapping()
    public Optional<List<ItemDto>> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
        return itemService.getItemsByUserId(userId);
-   }*/
+   }
 
 /*    @GetMapping("/search")
     public Optional<List<ItemDto>> getItemByText(@RequestParam("text") String text) {
