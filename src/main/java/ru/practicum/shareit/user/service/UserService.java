@@ -11,6 +11,8 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.utils.ValidateUser;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class UserService {
@@ -74,9 +76,9 @@ public class UserService {
         userRepository.delete(userRepository.getReferenceById(userId));
     }
 
-    /*public List<UserDto> getAllUsers() {
-        return userStorage.getAllUsers();
-    }*/
+    public List<UserDto> getAllUsers() {
+        return UserMapper.toUserDtoList(userRepository.findAll());
+    }
 
     private long getNextUserId() {
         userCounter++;

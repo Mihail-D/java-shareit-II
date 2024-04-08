@@ -38,8 +38,8 @@ public class UserController {
         userService.deleteUser(userId);
     }
 
-    /*@GetMapping()
+    @GetMapping()
     public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
-    }*/
+    }
 }
