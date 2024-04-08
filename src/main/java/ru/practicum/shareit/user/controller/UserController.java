@@ -28,10 +28,10 @@ public class UserController {
         return userService.updateUser(userId, user);
     }
 
-    /*@GetMapping("/{userId}")
+    @GetMapping("/{userId}")
     public UserDto getUserById(@Valid @PathVariable long userId) {
         return userService.getUserById(userId);
-    }*/
+    }
 
     /*@DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable long userId) {

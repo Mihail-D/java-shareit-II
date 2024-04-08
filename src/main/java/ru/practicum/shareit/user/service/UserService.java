@@ -5,12 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.EmailAlreadyExists;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.utils.ValidateUser;
-
-import javax.transaction.Transactional;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Service
@@ -44,9 +43,6 @@ public class UserService {
             throw new UserNotFoundException("User not found");
         }
 
-       // log.warn("<<<<<");
-       // log.warn("User ready for update with id: " + existingUser.getId());
-
         if (validateUser.isEmailExists(user.getEmail(), userRepository.findAll())
                 && !existingUser.getEmail().equals(user.getEmail())) {
             throw new EmailAlreadyExists("Email already exists");
@@ -61,14 +57,18 @@ public class UserService {
 
         userRepository.save(existingUser);
 
-       // log.warn("User updated and saved with id: " + existingUser.getId());
-       // log.warn(">>>>>");
         return existingUser;
     }
 
-    /*public UserDto getUserById(long userId) {
-        return userStorage.getUserById(userId);
-    }*/
+    public UserDto getUserById(long userId) {
+        User user = userRepository.getReferenceById(userId);
+
+        if (user == null) {
+            throw new UserNotFoundException("User not found");
+        }
+
+        return UserMapper.toUserDto(userRepository.getReferenceById(userId));
+    }
 
     /*public void deleteUser(long userId) {
         userStorage.deleteUser(userId);
