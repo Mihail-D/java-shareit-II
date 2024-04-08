@@ -3,9 +3,13 @@ package ru.practicum.shareit.item.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.utils.ValidateItem;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -34,6 +38,7 @@ public class ItemService {
         Item existingItem = itemRepository.getReferenceById(itemId);
         validateItem.validateItemForUpdate(ownerId, existingItem);
 
+
         if (item.getAvailable() != null) {
             existingItem.setAvailable(item.getAvailable());
         }
@@ -47,12 +52,12 @@ public class ItemService {
         return itemRepository.save(existingItem);
     }
 
+    public Optional<ItemDto> getItemById(long itemId) {
+        return Optional.of(ItemMapper.toItemDto(itemRepository.getReferenceById(itemId)));
+    }
+
    /* public Optional<List<ItemDto>> getItemsByUserId(long userId) {
         return itemStorage.getItemsByUserId(userId);
-    }*/
-
-    /*public Optional<ItemDto> getItemById(long itemId) {
-        return itemStorage.getItemById(itemId);
     }*/
 
 /*    public Optional<List<ItemDto>> getItemByText(String text) {
