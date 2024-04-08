@@ -15,15 +15,14 @@ import java.util.Map;
 
 @Slf4j
 @Repository
-public class UserInMemoryStorage implements UserStorage {
+public class UserInMemoryStorage {
 
     private long id = 0;
     private final Map<Long, User> userStorage = new HashMap<>();
     private final ValidateUser validateUser = new ValidateUser();
 
-    @Override
     public User createUser(User user) {
-        validateUser.validateUser(user, getAllUsers());
+       // validateUser.validateUser(user, getAllUsers());
 
         id++;
         user.setId(id);
@@ -33,7 +32,6 @@ public class UserInMemoryStorage implements UserStorage {
         return user;
     }
 
-    @Override
     public User updateUser(long userId, User user) {
         User existingUser = userStorage.get(userId);
 
@@ -41,10 +39,10 @@ public class UserInMemoryStorage implements UserStorage {
             throw new UserNotFoundException("User not found");
         }
 
-        if (validateUser.isEmailExists(user.getEmail(), getAllUsers())
+/*        if (validateUser.isEmailExists(user.getEmail(), getAllUsers())
                 && !existingUser.getEmail().equals(user.getEmail())) {
             throw new EmailAlreadyExists("Email already exists");
-        }
+        }*/
 
         if (user.getName() != null) {
             existingUser.setName(user.getName());
@@ -58,7 +56,6 @@ public class UserInMemoryStorage implements UserStorage {
         return existingUser;
     }
 
-    @Override
     public UserDto getUserById(long id) {
         User user = userStorage.get(id);
         if (user == null) {
@@ -67,12 +64,11 @@ public class UserInMemoryStorage implements UserStorage {
         return userToDto(user);
     }
 
-    @Override
     public void deleteUser(long id) {
         userStorage.remove(id);
     }
 
-    @Override
+
     public List<UserDto> getAllUsers() {
         List<UserDto> userDtoList = new ArrayList<>();
         for (User user : userStorage.values()) {

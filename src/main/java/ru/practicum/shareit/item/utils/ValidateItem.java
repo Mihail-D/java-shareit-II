@@ -8,6 +8,8 @@ import ru.practicum.shareit.exceptions.SharerUserIdException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.repository.UserStorage;
 
 import java.util.List;
@@ -17,11 +19,11 @@ import java.util.Optional;
 @Component
 public class ValidateItem {
 
-    UserStorage userStorage;
+   private final UserRepository userRepository;
 
     @Autowired
-    public ValidateItem(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public ValidateItem(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public boolean isUserIdNotNull(Long userId) {
@@ -29,7 +31,7 @@ public class ValidateItem {
     }
 
     public boolean isUserIdUnknown(long userId) {
-        List<UserDto> userIds = userStorage.getAllUsers();
+        List<UserDto> userIds = UserMapper.toUserDtoList(userRepository.findAll());
 
         Optional<UserDto> userOptional = userIds.stream()
                 .filter(i -> userId == i.getId())

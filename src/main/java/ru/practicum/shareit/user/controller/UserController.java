@@ -23,23 +23,23 @@ public class UserController {
         return userService.createUser(user);
     }
 
-    @PatchMapping("/{userId}")
+/*    @PatchMapping("/{userId}")
     public User updateUser(@Valid @PathVariable long userId, @RequestBody User user) {
         return userService.updateUser(userId, user);
-    }
+    }*/
 
-    @GetMapping("/{userId}")
+    /*@GetMapping("/{userId}")
     public UserDto getUserById(@Valid @PathVariable long userId) {
         return userService.getUserById(userId);
-    }
+    }*/
 
-    @DeleteMapping("/{userId}")
+    /*@DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable long userId) {
         userService.deleteUser(userId);
-    }
+    }*/
 
-    @GetMapping()
+    /*@GetMapping()
     public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
-    }
+    }*/
 }
