@@ -33,10 +33,10 @@ public class UserController {
         return userService.getUserById(userId);
     }
 
-    /*@DeleteMapping("/{userId}")
+    @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable long userId) {
         userService.deleteUser(userId);
-    }*/
+    }
 
     /*@GetMapping()
     public List<UserDto> getAllUsers() {

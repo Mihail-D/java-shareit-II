@@ -70,9 +70,9 @@ public class UserService {
         return UserMapper.toUserDto(userRepository.getReferenceById(userId));
     }
 
-    /*public void deleteUser(long userId) {
-        userStorage.deleteUser(userId);
-    }*/
+    public void deleteUser(long userId) {
+        userRepository.delete(userRepository.getReferenceById(userId));
+    }
 
     /*public List<UserDto> getAllUsers() {
         return userStorage.getAllUsers();
