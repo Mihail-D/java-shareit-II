@@ -1,41 +1,54 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemStorage;
+import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item.utils.ValidateItem;
 
-import java.util.List;
-import java.util.Optional;
-
+@Slf4j
 @Service
 public class ItemService {
 
-    ItemStorage itemStorage;
+    ItemRepository itemRepository;
+    ValidateItem validateItem;
+    long itemCounter = 0;
 
     @Autowired
-    public ItemService(ItemStorage itemStorage) {
-        this.itemStorage = itemStorage;
+    public ItemService(ItemRepository itemRepository, ValidateItem validateItem) {
+        this.itemRepository = itemRepository;
+        this.validateItem = validateItem;
     }
 
     public Item createItem(long ownerId, Item item) {
-        return itemStorage.createItem(ownerId, item);
+        validateItem.validateItemForCreate(ownerId, item);
+        long itemId = getNextItemId();
+        item.setId(itemId);
+        item.setOwnerId(ownerId);
+
+        return itemRepository.save(item);
     }
 
-    public Item updateItem(long ownerId, long itemId, Item item) {
+
+    /*public Item updateItem(long ownerId, long itemId, Item item) {
         return itemStorage.updateItem(ownerId, itemId, item);
-    }
+    }*/
 
-    public Optional<ItemDto> getItemById(long itemId) {
-        return itemStorage.getItemById(itemId);
-    }
-
-    public Optional<List<ItemDto>> getItemsByUserId(long userId) {
+   /* public Optional<List<ItemDto>> getItemsByUserId(long userId) {
         return itemStorage.getItemsByUserId(userId);
-    }
+    }*/
 
-    public Optional<List<ItemDto>> getItemByText(String text) {
+    /*public Optional<ItemDto> getItemById(long itemId) {
+        return itemStorage.getItemById(itemId);
+    }*/
+
+/*    public Optional<List<ItemDto>> getItemByText(String text) {
         return itemStorage.getItemByText(text);
+    }*/
+
+    private long getNextItemId() {
+        itemCounter++;
+        return itemCounter;
     }
 }

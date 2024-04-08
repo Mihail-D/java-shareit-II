@@ -13,7 +13,7 @@ import java.util.*;
 
 @Slf4j
 @Repository
-public class ItemInMemoryStorage implements ItemStorage {
+public class ItemInMemoryStorage {
 
     private long id = 0;
     private final Map<Long, Item> itemStorage = new HashMap<>();
@@ -24,7 +24,7 @@ public class ItemInMemoryStorage implements ItemStorage {
         this.validateItem = validateItem;
     }
 
-    @Override
+
     public Item createItem(long ownerId, Item item) {
 
         validateItem.validateItemForCreate(ownerId, item);
@@ -34,14 +34,14 @@ public class ItemInMemoryStorage implements ItemStorage {
 
         User owner = new User();
         owner.setId(ownerId);
-        item.setOwner(owner);
+        item.setOwnerId(ownerId);
 
         itemStorage.put(id, item);
 
         return item;
     }
 
-    @Override
+
     public Item updateItem(long ownerId, long itemId, Item item) {
 
         Item existingItem = itemStorage.get(itemId);
@@ -63,17 +63,17 @@ public class ItemInMemoryStorage implements ItemStorage {
         return existingItem;
     }
 
-    @Override
+
     public Optional<ItemDto> getItemById(long itemId) {
         return Optional.of(ItemMapper.toItemDto(itemStorage.get(itemId)));
     }
 
-    @Override
+
     public Optional<List<ItemDto>> getItemsByUserId(long userId) {
         List<ItemDto> itemsList = new ArrayList<>();
 
         for (Item i : itemStorage.values()) {
-            if (i.getOwner().getId() == userId) {
+            if (i.getOwnerId() == userId) {
                 itemsList.add(ItemMapper.toItemDto(i));
             }
         }
@@ -81,7 +81,7 @@ public class ItemInMemoryStorage implements ItemStorage {
         return Optional.of(itemsList);
     }
 
-    @Override
+
     public Optional<List<ItemDto>> getItemByText(String text) {
         List<ItemDto> itemsList = new ArrayList<>();
 

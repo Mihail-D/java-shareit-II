@@ -18,7 +18,7 @@ import java.util.Optional;
 @Component
 public class ValidateItem {
 
-   private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public ValidateItem(UserRepository userRepository) {
@@ -53,24 +53,21 @@ public class ValidateItem {
     }
 
     public void validateItemForCreate(long ownerId, Item item) {
+        if (isItemAvailable(item)) {
+            throw new ItemDataInputErrorException("item availability status is missing");
+        }
+        if (isItemNameEmpty(item)) {
+            throw new ItemDataInputErrorException("item name cannot be empty");
+        }
+        if (isDescriptionEmpty(item)) {
+            throw new ItemDataInputErrorException("item description cannot be empty");
+        }
         if (isUserIdNotNull(ownerId)) {
             throw new SharerUserIdException("missing userId parameter in request header");
         }
 
         if (isUserIdUnknown(ownerId)) {
             throw new UserNotFoundException("user not found");
-        }
-
-        if (isItemAvailable(item)) {
-            throw new ItemDataInputErrorException("item availability status is missing");
-        }
-
-        if (isItemNameEmpty(item)) {
-            throw new ItemDataInputErrorException("item name cannot be empty");
-        }
-
-        if (isDescriptionEmpty(item)) {
-            throw new ItemDataInputErrorException("item description cannot be empty");
         }
     }
 
@@ -83,7 +80,7 @@ public class ValidateItem {
             throw new UserNotFoundException("user not found");
         }
 
-        if (existingItem.getOwner().getId() != ownerId) {
+        if (existingItem.getOwnerId() != ownerId) {
             throw new UserNotFoundException("the current and new owners of the item do not match");
         }
     }

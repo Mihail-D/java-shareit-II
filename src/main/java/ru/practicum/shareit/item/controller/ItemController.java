@@ -3,12 +3,8 @@ package ru.practicum.shareit.item.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -28,26 +24,30 @@ public class ItemController {
         return itemService.createItem(ownerId, item);
     }
 
-    @PatchMapping("/{itemId}")
+
+    /*@PatchMapping("/{itemId}")
     public Item updateItem(
             @RequestHeader("X-Sharer-User-Id") Long ownerId, @PathVariable long itemId, @RequestBody Item item
     ) {
 
         return itemService.updateItem(ownerId, itemId, item);
-    }
+    }*/
 
-    @GetMapping("/{itemId}")
+
+   /* @GetMapping("/{itemId}")
     public Optional<ItemDto> getItemById(@PathVariable long itemId) {
         return itemService.getItemById(itemId);
-    }
+    }*/
 
-    @GetMapping()
-    public Optional<List<ItemDto>> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.getItemsByUserId(userId);
-    }
+    /* @GetMapping()
+   public Optional<List<ItemDto>> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+       return itemService.getItemsByUserId(userId);
+   }*/
 
-    @GetMapping("/search")
+/*    @GetMapping("/search")
     public Optional<List<ItemDto>> getItemByText(@RequestParam("text") String text) {
         return itemService.getItemByText(text);
-    }
+    }*/
+
+
 }
