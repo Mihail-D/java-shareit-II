@@ -1,86 +1,42 @@
 package ru.practicum.shareit.booking.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.utils.Status;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Table(name="bookings", schema = "public")
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Getter @Setter
+@Table(name = "bookings", schema = "public")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Booking {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    @Column(name = "id")
-    private long id;
+    private Long id;
 
-    @Column(name = "start_date")
-    @NotNull
-    private LocalDateTime start;
+    @Column(name = "start_date", nullable = false)
+    private LocalDateTime start = LocalDateTime.now();
 
-    @Column(name = "end_date")
-    @NotNull
+    @Column(name = "end_date", nullable = false)
     private LocalDateTime end;
 
-    @Column(name = "item_id")
-    @NotNull
-    private long itemId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", nullable = false)
+    private Item item;
 
-    @Column(name = "booker_id")
-    @NotNull
-    private long booker_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booker_id", nullable = false)
+    private User booker;
 
-    @Column(name = "status")
-    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private Status status;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Booking booking = (Booking) o;
-
-        if (getId() != booking.getId()) {
-            return false;
-        }
-        if (getItemId() != booking.getItemId()) {
-            return false;
-        }
-        if (getBooker_id() != booking.getBooker_id()) {
-            return false;
-        }
-        if (!getStart().equals(booking.getStart())) {
-            return false;
-        }
-        if (!getEnd().equals(booking.getEnd())) {
-            return false;
-        }
-        return getStatus() == booking.getStatus();
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (getId() ^ (getId() >>> 32));
-        result = 31 * result + getStart().hashCode();
-        result = 31 * result + getEnd().hashCode();
-        result = 31 * result + (int) (getItemId() ^ (getItemId() >>> 32));
-        result = 31 * result + (int) (getBooker_id() ^ (getBooker_id() >>> 32));
-        result = 31 * result + getStatus().hashCode();
-        return result;
-    }
 }

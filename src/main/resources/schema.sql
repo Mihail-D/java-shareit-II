@@ -51,3 +51,5 @@ CREATE TABLE IF NOT EXISTS comments (
 	CONSTRAINT fk_comment_author_id FOREIGN KEY (author_id) REFERENCES users (id)
 
 );
+
+

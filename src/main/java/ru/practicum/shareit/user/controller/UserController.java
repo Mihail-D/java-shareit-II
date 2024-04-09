@@ -1,45 +1,56 @@
 package ru.practicum.shareit.user.controller;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
+@Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    @PostMapping
+    public UserDto addUser(@RequestBody @Valid UserDto userDto) {
 
-    @PostMapping()
-    public User createUser(@Valid @RequestBody User user) {
-        return userService.createUser(user);
+        log.info("Add User {} ", userDto.getId());
+        return userService.addUser(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public User updateUser(@Valid @PathVariable long userId, @RequestBody User user) {
-        return userService.updateUser(userId, user);
-    }
+    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Long userId) {
 
-    @GetMapping("/{userId}")
-    public UserDto getUserById(@Valid @PathVariable long userId) {
-        return userService.getUserById(userId);
+        log.info("Update User {} ", userDto.getId());
+        return userService.updateUser(userDto, userId);
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUser(@PathVariable long userId) {
+    public void deleteUser(@PathVariable Long userId) {
+
+        log.info("User {} deleted ", userId);
         userService.deleteUser(userId);
     }
 
-    @GetMapping()
+    @GetMapping("/{userId}")
+    public UserDto getUser(@PathVariable Long userId) {
+
+        log.info("Get User {} ", userId);
+        return userService.getUserById(userId);
+    }
+
+    @GetMapping
     public List<UserDto> getAllUsers() {
+
+        log.info("List all Users");
         return userService.getAllUsers();
     }
 }

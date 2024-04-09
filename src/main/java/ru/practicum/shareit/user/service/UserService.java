@@ -1,87 +1,18 @@
 package ru.practicum.shareit.user.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.EmailAlreadyExists;
-import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.utils.ValidateUser;
 
 import java.util.List;
 
-@Slf4j
-@Service
-public class UserService {
+public interface UserService {
 
-    private final UserRepository userRepository;
-    private final ValidateUser validateUser;
-    long userCounter = 0;
+    UserDto addUser(UserDto userDto);
 
-    @Autowired
-    public UserService(UserRepository userRepository, ValidateUser validateUser) {
-        this.userRepository = userRepository;
-        this.validateUser = validateUser;
-    }
+    UserDto updateUser(UserDto userDto, long userId);
 
-    public User createUser(User user) {
+    void deleteUser(long userId);
 
-        long userId = getNextUserId();
+    UserDto getUserById(long userId);
 
-        validateUser.validateUser(user, userRepository.findAll());
-
-        user.setId(userId);
-
-        return userRepository.save(user);
-    }
-
-    public User updateUser(long userId, User user) {
-        User existingUser = userRepository.getReferenceById(userId);
-
-        if (existingUser == null) {
-            throw new UserNotFoundException("User not found");
-        }
-
-        if (validateUser.isEmailExists(user.getEmail(), userRepository.findAll())
-                && !existingUser.getEmail().equals(user.getEmail())) {
-            throw new EmailAlreadyExists("Email already exists");
-        }
-
-        if (user.getName() != null) {
-            existingUser.setName(user.getName());
-        }
-        if (user.getEmail() != null) {
-            existingUser.setEmail(user.getEmail());
-        }
-
-        userRepository.save(existingUser);
-
-        return existingUser;
-    }
-
-    public UserDto getUserById(long userId) {
-        User user = userRepository.getReferenceById(userId);
-
-        if (user == null) {
-            throw new UserNotFoundException("User not found");
-        }
-
-        return UserMapper.toUserDto(userRepository.getReferenceById(userId));
-    }
-
-    public void deleteUser(long userId) {
-        userRepository.delete(userRepository.getReferenceById(userId));
-    }
-
-    public List<UserDto> getAllUsers() {
-        return UserMapper.toUserDtoList(userRepository.findAll());
-    }
-
-    private long getNextUserId() {
-        userCounter++;
-        return userCounter;
-    }
+    List<UserDto> getAllUsers();
 }
