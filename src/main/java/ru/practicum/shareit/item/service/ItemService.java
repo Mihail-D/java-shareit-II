@@ -3,6 +3,9 @@ package ru.practicum.shareit.item.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.ItemDataInputErrorException;
+import ru.practicum.shareit.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -53,11 +56,16 @@ public class ItemService {
         return itemRepository.save(existingItem);
     }
 
-    public Optional<ItemDto> getItemById(long itemId) {
-        return Optional.of(ItemMapper.toItemDto(itemRepository.getReferenceById(itemId)));
+    public ItemDto getItemById(long itemId) {
+        Item item = itemRepository.findById(itemId).orElse(null);
+        if (item == null) {
+            throw new ItemNotFoundException("Item with id " + itemId + " not found");
+        }
+        return ItemMapper.toItemDto(item);
     }
 
     public Optional<List<ItemDto>> getItemsByUserId(long userId) {
+
         List<ItemDto> itemsList = new ArrayList<>();
 
         for (Item i : itemRepository.findAll()) {
@@ -69,9 +77,25 @@ public class ItemService {
         return Optional.of(itemsList);
     }
 
-/*    public Optional<List<ItemDto>> getItemByText(String text) {
-        return itemStorage.getItemByText(text);
-    }*/
+    public Optional<List<ItemDto>> getItemByText(String text) {
+        List<ItemDto> itemsList = new ArrayList<>();
+
+        if (text.isBlank()) {
+            return Optional.of(itemsList);
+        }
+
+        for (Item i : itemRepository.findAll()) {
+            if (!i.getAvailable()) {
+                continue;
+            }
+            if (i.getName().toLowerCase().contains(text.toLowerCase())
+                    || i.getDescription().toLowerCase().contains(text.toLowerCase())) {
+                itemsList.add(ItemMapper.toItemDto(i));
+            }
+        }
+
+        return Optional.of(itemsList);
+    }
 
     private long getNextItemId() {
         itemCounter++;
