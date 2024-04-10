@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.mappers;
 
 import lombok.experimental.UtilityClass;
+import org.mapstruct.Mapper;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @UtilityClass
-//@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring")
 public class CommentMapper {
 
     public static CommentDto toCommentDto(Comment comment) {
