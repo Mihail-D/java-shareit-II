@@ -1,71 +1,39 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import ru.practicum.shareit.request.model.ItemRequest;
+import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 
-@Getter
-@Setter
+/**
+ * TODO Sprint add-controllers.
+ */
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "items", schema = "public")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Item {
 
-    private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    private Long id;
 
-    @NotBlank
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @NotBlank
-    private User owner;
-
-    @NotBlank
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @NotNull
-    private ItemRequest request;
-
-    @NotNull
+    @Column(name = "is_available")
     private Boolean available;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 
-        Item item = (Item) o;
-
-        if (getId() != item.getId()) {
-            return false;
-        }
-        if (!getName().equals(item.getName())) {
-            return false;
-        }
-        if (!getOwner().equals(item.getOwner())) {
-            return false;
-        }
-        if (!getDescription().equals(item.getDescription())) {
-            return false;
-        }
-        if (!getRequest().equals(item.getRequest())) {
-            return false;
-        }
-        return getAvailable().equals(item.getAvailable());
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (getId() ^ (getId() >>> 32));
-        result = 31 * result + getName().hashCode();
-        result = 31 * result + getOwner().hashCode();
-        result = 31 * result + getDescription().hashCode();
-        result = 31 * result + getRequest().hashCode();
-        result = 31 * result + getAvailable().hashCode();
-        return result;
-    }
 }

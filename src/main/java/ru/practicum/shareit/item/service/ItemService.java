@@ -1,41 +1,21 @@
 package ru.practicum.shareit.item.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemStorage;
 
 import java.util.List;
-import java.util.Optional;
 
-@Service
-public class ItemService {
+public interface ItemService {
 
-    ItemStorage itemStorage;
+    ItemDto addItem(long owner, ItemDto itemDto);
 
-    @Autowired
-    public ItemService(ItemStorage itemStorage) {
-        this.itemStorage = itemStorage;
-    }
+    ItemDto updateItem(ItemDto itemDto, long itemId, long userId);
 
-    public Item createItem(long ownerId, Item item) {
-        return itemStorage.createItem(ownerId, item);
-    }
+    ItemDto getItemById(long itemId, long userId);
 
-    public Item updateItem(long ownerId, long itemId, Item item) {
-        return itemStorage.updateItem(ownerId, itemId, item);
-    }
+    List<ItemDto> getItemsUser(long userId);
 
-    public Optional<ItemDto> getItemById(long itemId) {
-        return itemStorage.getItemById(itemId);
-    }
+    List<ItemDto> searchItem(String text);
 
-    public Optional<List<ItemDto>> getItemsByUserId(long userId) {
-        return itemStorage.getItemsByUserId(userId);
-    }
-
-    public Optional<List<ItemDto>> getItemByText(String text) {
-        return itemStorage.getItemByText(text);
-    }
+    CommentDto addComment(long userId, long itemId, CommentDto commentDto);
 }
