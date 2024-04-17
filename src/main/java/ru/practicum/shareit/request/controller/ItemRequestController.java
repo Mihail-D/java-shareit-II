@@ -9,6 +9,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 import static ru.practicum.shareit.util.Constant.HEADER_USER;
@@ -36,4 +37,8 @@ public class ItemRequestController {
         return itemRequestService.getItemRequestByUserId(userId, requestId);
     }
 
+    @GetMapping()
+    public Optional<List<ItemRequestDto>> getItemRequestsByUserId(@RequestHeader(HEADER_USER) long userId) {
+        return itemRequestService.getItemRequestsByUserId(userId);
+    }
 }
