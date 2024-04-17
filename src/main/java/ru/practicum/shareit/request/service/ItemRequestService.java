@@ -23,7 +23,7 @@ public class ItemRequestService {
     }
 
     public ItemRequest createItemRequest(long userId, ItemRequest itemRequest) {
-        unionService.checkUser(userId);
+        unionService.checkItemRequest(userId, itemRequest);
         itemRequest.setRequestor(userId);
         itemRequest.setCreated(LocalDateTime.now());
         return itemRequestRepository.save(itemRequest);
