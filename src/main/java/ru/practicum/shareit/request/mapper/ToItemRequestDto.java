@@ -21,6 +21,15 @@ public class ToItemRequestDto {
                 .build());
     }
 
+    public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
+        return ItemRequestDto.builder()
+                .id(itemRequest.getId())
+                .description(itemRequest.getDescription())
+                .requestor(itemRequest.getRequestor())
+                .created(LocalDate.from(itemRequest.getCreated()))
+                .build();
+    }
+
     public static List<ItemRequestDto> toItemRequestDtoList(List<ItemRequest> itemRequestList) {
         return itemRequestList.stream()
                 .map(itemRequest -> ItemRequestDto.builder()

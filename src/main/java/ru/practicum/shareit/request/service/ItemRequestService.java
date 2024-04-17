@@ -2,6 +2,8 @@ package ru.practicum.shareit.request.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -42,5 +44,10 @@ public class ItemRequestService {
         unionService.checkUser(userId);
         List<ItemRequest> itemRequests = itemRequestRepository.findByRequestor(userId, Sort.by(Sort.Direction.DESC, "created"));
         return Optional.of(ToItemRequestDto.toItemRequestDtoList(itemRequests));
+    }
+
+    public Page<ItemRequestDto> getOtherUsersItemRequests(long userId, int from, int size) {
+        Page<ItemRequest> itemRequests = itemRequestRepository.findByRequestorNot(userId, PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, "created")));
+        return itemRequests.map(ToItemRequestDto::toItemRequestDto);
     }
 }

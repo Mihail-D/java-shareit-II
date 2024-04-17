@@ -2,6 +2,7 @@ package ru.practicum.shareit.request.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -40,5 +41,10 @@ public class ItemRequestController {
     @GetMapping()
     public Optional<List<ItemRequestDto>> getItemRequestsByUserId(@RequestHeader(HEADER_USER) long userId) {
         return itemRequestService.getItemRequestsByUserId(userId);
+    }
+
+    @GetMapping("/all")
+    public Page<ItemRequestDto> getOtherUsersItemRequests(@RequestHeader(HEADER_USER) long userId, @RequestParam int from, @RequestParam int size) {
+        return itemRequestService.getOtherUsersItemRequests(userId, from, size);
     }
 }
