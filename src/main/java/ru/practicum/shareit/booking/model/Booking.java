@@ -1,16 +1,15 @@
 package ru.practicum.shareit.booking.model;
 
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
 import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,24 +41,42 @@ public class Booking {
     private Status status;
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) {
-            return false;
-        }
+
         Booking booking = (Booking) o;
-        return getId() != null && Objects.equals(getId(), booking.getId());
+
+        if (getId() != null ? !getId().equals(booking.getId()) : booking.getId() != null) {
+            return false;
+        }
+        if (!getStart().equals(booking.getStart())) {
+            return false;
+        }
+        if (!getEnd().equals(booking.getEnd())) {
+            return false;
+        }
+        if (!getItem().equals(booking.getItem())) {
+            return false;
+        }
+        if (!getBooker().equals(booking.getBooker())) {
+            return false;
+        }
+        return getStatus() == booking.getStatus();
     }
 
     @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    public int hashCode() {
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + getStart().hashCode();
+        result = 31 * result + getEnd().hashCode();
+        result = 31 * result + getItem().hashCode();
+        result = 31 * result + getBooker().hashCode();
+        result = 31 * result + getStatus().hashCode();
+        return result;
     }
 }
