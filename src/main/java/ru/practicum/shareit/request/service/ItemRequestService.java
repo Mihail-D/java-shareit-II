@@ -3,11 +3,14 @@ package ru.practicum.shareit.request.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.mapper.ToItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.util.UnionService;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,5 +30,9 @@ public class ItemRequestService {
         itemRequest.setRequestor(userId);
         itemRequest.setCreated(LocalDateTime.now());
         return itemRequestRepository.save(itemRequest);
+    }
+
+    public Optional<ItemRequestDto> getItemRequestByUserId(long userId, long requestId) {
+        return ToItemRequestDto.toItemRequestDto(itemRequestRepository.findByRequestorAndId(userId, requestId));
     }
 }
