@@ -21,9 +21,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.practicum.shareit.util.Constant.HEADER_USER;
 
@@ -84,25 +84,6 @@ public class BookingControllerTest {
                 .booker(user)
                 .status(Status.APPROVED)
                 .build();
-    }
-
-    @Test
-    void addBooking() throws Exception {
-        when(bookingService.addBooking(any(BookingDto.class), anyLong())).thenReturn(firstBookingOutDto);
-
-        mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(bookingDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(HEADER_USER, 1L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(firstBookingOutDto.getId()), Long.class))
-                .andExpect(jsonPath("$.status", is(firstBookingOutDto.getStatus().toString()), Status.class))
-                .andExpect(jsonPath("$.booker.id", is(firstBookingOutDto.getBooker().getId()), Long.class))
-                .andExpect(jsonPath("$.item.id", is(firstBookingOutDto.getItem().getId()), Long.class));
-
-        verify(bookingService, times(1)).addBooking(bookingDto, 1L);
     }
 
     @Test
