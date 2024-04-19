@@ -1,53 +1,19 @@
 package ru.practicum.shareit.request.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.mapper.ToItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.request.repository.ItemRequestRepository;
-import ru.practicum.shareit.util.UnionService;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-@Slf4j
-@Service
-public class ItemRequestService {
+public interface ItemRequestService {
 
-    UnionService unionService;
-    ItemRequestRepository itemRequestRepository;
+    List<ItemRequestDto> getRequests(long userId);
 
-    @Autowired
-    public ItemRequestService(UnionService unionService, ItemRequestRepository itemRequestRepository) {
-        this.unionService = unionService;
-        this.itemRequestRepository = itemRequestRepository;
-    }
+    ItemRequestDto addRequest(ItemRequestDto itemRequestDto, long userId);
 
-    public ItemRequest createItemRequest(long userId, ItemRequest itemRequest) {
-        unionService.checkItemRequest(userId, itemRequest);
-        itemRequest.setRequestor(userId);
-        itemRequest.setCreated(LocalDateTime.now());
-        return itemRequestRepository.save(itemRequest);
-    }
+    ItemRequestDto addItemsToRequest(ItemRequest itemRequest);
 
-    public Optional<ItemRequestDto> getItemRequestByUserId(long userId, long requestId) {
-        return ToItemRequestDto.toItemRequestDto(itemRequestRepository.findByRequestorAndId(userId, requestId));
-    }
+    ItemRequestDto getRequestById(long userId, long requestId);
 
-    public Optional<List<ItemRequestDto>> getItemRequestsByUserId(long userId) {
-        unionService.checkUser(userId);
-        List<ItemRequest> itemRequests = itemRequestRepository.findByRequestor(userId, Sort.by(Sort.Direction.DESC, "created"));
-        return Optional.of(ToItemRequestDto.toItemRequestDtoList(itemRequests));
-    }
-
-    public Page<ItemRequestDto> getOtherUsersItemRequests(long userId, int from, int size) {
-        Page<ItemRequest> itemRequests = itemRequestRepository.findByRequestorNot(userId, PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, "created")));
-        return itemRequests.map(ToItemRequestDto::toItemRequestDto);
-    }
+    List<ItemRequestDto> getAllRequests(Long userId, Integer from, Integer size);
 }

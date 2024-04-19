@@ -1,6 +1,6 @@
 package ru.practicum.shareit.util;
 
-import ru.practicum.shareit.request.model.ItemRequest;
+import org.springframework.data.domain.PageRequest;
 
 public interface UnionService {
 
@@ -10,5 +10,7 @@ public interface UnionService {
 
     void checkBooking(Long booking);
 
-    void checkItemRequest(long userId, ItemRequest itemRequest);
+    void checkRequest(Long requestId);
+
+    PageRequest checkPageSize(Integer from, Integer size);
 }

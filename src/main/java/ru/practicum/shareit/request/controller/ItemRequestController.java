@@ -1,50 +1,63 @@
 package ru.practicum.shareit.request.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 import static ru.practicum.shareit.util.Constant.HEADER_USER;
 
 @Slf4j
 @Validated
-@RestController
+@Controller
+@RequiredArgsConstructor
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
 
-    ItemRequestService itemRequestService;
+    private final ItemRequestService itemRequestService;
 
-    @Autowired
-    public ItemRequestController(ItemRequestService itemRequestService) {
-        this.itemRequestService = itemRequestService;
+    @PostMapping
+    public ResponseEntity<ItemRequestDto> addRequest(
+            @RequestHeader(HEADER_USER) Long userId,
+            @RequestBody @Valid ItemRequestDto itemRequestDto
+    ) {
+
+        log.info("User {}, add new request", userId);
+        return ResponseEntity.ok(itemRequestService.addRequest(itemRequestDto, userId));
     }
 
-    @PostMapping()
-    public ItemRequest createRequest(@RequestHeader(HEADER_USER) Long userId, @RequestBody @Valid ItemRequest itemRequest) {
-        return itemRequestService.createItemRequest(userId, itemRequest);
-    }
+    @GetMapping
+    public ResponseEntity<List<ItemRequestDto>> getRequests(@RequestHeader(HEADER_USER) Long userId) {
 
-    @GetMapping("/{requestId}")
-    public Optional<ItemRequestDto> getItemRequestByUserId(@RequestHeader(HEADER_USER) Long userId, @PathVariable long requestId) {
-        return itemRequestService.getItemRequestByUserId(userId, requestId);
-    }
-
-    @GetMapping()
-    public Optional<List<ItemRequestDto>> getItemRequestsByUserId(@RequestHeader(HEADER_USER) long userId) {
-        return itemRequestService.getItemRequestsByUserId(userId);
+        log.info("Get requests by user Id {}", userId);
+        return ResponseEntity.ok(itemRequestService.getRequests(userId));
     }
 
     @GetMapping("/all")
-    public Page<ItemRequestDto> getOtherUsersItemRequests(@RequestHeader(HEADER_USER) long userId, @RequestParam int from, @RequestParam int size) {
-        return itemRequestService.getOtherUsersItemRequests(userId, from, size);
+    public ResponseEntity<List<ItemRequestDto>> getAllRequests(
+            @RequestHeader(HEADER_USER) Long userId,
+            @RequestParam(defaultValue = "0", required = false) Integer from,
+            @RequestParam(defaultValue = "10", required = false) Integer size
+    ) {
+
+        log.info("Get all requests by All users ");
+        return ResponseEntity.ok(itemRequestService.getAllRequests(userId, from, size));
+    }
+
+    @GetMapping("/{requestId}")
+    public ResponseEntity<ItemRequestDto> getRequestById(
+            @RequestHeader(HEADER_USER) Long userId,
+            @PathVariable("requestId") Long requestId
+    ) {
+
+        log.info("Get request {}", requestId);
+        return ResponseEntity.ok(itemRequestService.getRequestById(userId, requestId));
     }
 }
