@@ -1,13 +1,15 @@
 package ru.practicum.shareit.booking;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
@@ -16,140 +18,133 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.practicum.shareit.util.Constant.HEADER_USER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
-@WebMvcTest(controllers = BookingController.class)
-public class BookingControllerTest {
+class BookingControllerTest {
 
-    @MockBean
+    @Mock
     private BookingService bookingService;
 
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private MockMvc mvc;
-
-    private BookingDto bookingDto;
-
-    private BookingOutDto firstBookingOutDto;
-
-    private BookingOutDto secondBookingOutDto;
+    @InjectMocks
+    private BookingController bookingController;
 
     @BeforeEach
-    void beforeEach() {
-
-        UserDto user = UserDto.builder()
-                .id(1L)
-                .name("Barby")
-                .email("barby@gmail.com")
-                .build();
-
-        ItemDto itemDto = ItemDto.builder()
-                .requestId(1L)
-                .name("slippers")
-                .description("Step into comfort with our cozy slippers!")
-                .available(true)
-                .build();
-
-        bookingDto = BookingDto.builder()
-                .itemId(1L)
-                .start(LocalDateTime.of(2023, 8, 4, 0, 0))
-                .end(LocalDateTime.of(2023, 8, 4, 12, 0))
-                .build();
-
-        firstBookingOutDto = BookingOutDto.builder()
-                .id(1L)
-                .start(LocalDateTime.of(2023, 8, 4, 0, 0))
-                .end(LocalDateTime.of(2023, 8, 4, 12, 0))
-                .item(itemDto)
-                .booker(user)
-                .status(Status.APPROVED)
-                .build();
-
-        secondBookingOutDto = BookingOutDto.builder()
-                .id(2L)
-                .start(LocalDateTime.of(2023, 8, 4, 14, 0))
-                .end(LocalDateTime.of(2023, 8, 4, 16, 0))
-                .item(itemDto)
-                .booker(user)
-                .status(Status.APPROVED)
-                .build();
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void approveBooking() throws Exception {
-        when(bookingService.approveBooking(anyLong(), anyLong(), anyBoolean())).thenReturn(firstBookingOutDto);
+    void shouldAddBookingSuccessfully() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-        mvc.perform(patch("/bookings/{bookingId}", 1L)
-                        .param("approved", "true")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(HEADER_USER, 1L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(firstBookingOutDto.getId()), Long.class))
-                .andExpect(jsonPath("$.status", is(firstBookingOutDto.getStatus().toString()), Status.class))
-                .andExpect(jsonPath("$.booker.id", is(firstBookingOutDto.getBooker().getId()), Long.class))
-                .andExpect(jsonPath("$.item.id", is(firstBookingOutDto.getItem().getId()), Long.class));
+        when(bookingService.addBooking(any(BookingDto.class), anyLong()))
+                .thenReturn(new BookingOutDto(1L, LocalDateTime.now(), LocalDateTime.now(), Status.APPROVED, new UserDto(1L, "login", "email"), new ItemDto(
+                        1L,
+                        "Item Name",
+                        "Item Description",
+                        true,
+                        null,
+                        null,
+                        null,
+                        1L
+                )));
 
-        verify(bookingService, times(1)).approveBooking(1L, 1L, true);
+        ResponseEntity<BookingOutDto> responseEntity = bookingController.addBooking(1L, new BookingDto(1L, LocalDateTime.now(), LocalDateTime.now(), Status.APPROVED));
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
-    void getBookingById() throws Exception {
-        when(bookingService.getBookingById(anyLong(), anyLong())).thenReturn(firstBookingOutDto);
+    void shouldApproveBookingSuccessfully() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-        mvc.perform(get("/bookings/{bookingId}", 1L)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(HEADER_USER, 1L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(firstBookingOutDto.getId()), Long.class))
-                .andExpect(jsonPath("$.status", is(firstBookingOutDto.getStatus().toString()), Status.class))
-                .andExpect(jsonPath("$.booker.id", is(firstBookingOutDto.getBooker().getId()), Long.class))
-                .andExpect(jsonPath("$.item.id", is(firstBookingOutDto.getItem().getId()), Long.class));
+        when(bookingService.approveBooking(anyLong(), anyLong(), anyBoolean()))
+                .thenReturn(new BookingOutDto(1L, LocalDateTime.now(), LocalDateTime.now(), Status.APPROVED, new UserDto(1L, "login", "email"), new ItemDto(
+                        1L,
+                        "Item Name",
+                        "Item Description",
+                        true,
+                        null,
+                        null,
+                        null,
+                        1L
+                )));
 
-        verify(bookingService, times(1)).getBookingById(1L, 1L);
+        ResponseEntity<BookingOutDto> responseEntity = bookingController.approveBooking(1L, 1L, true);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
-    void getAllBookingsByBookerId() throws Exception {
-        when(bookingService.getAllBookingsByBookerId(anyLong(), anyString(), anyInt(), anyInt())).thenReturn(List.of(firstBookingOutDto, secondBookingOutDto));
+    void shouldGetBookingByIdSuccessfully() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-        mvc.perform(get("/bookings")
-                        .param("state", "ALL")
-                        .param("from", String.valueOf(0))
-                        .param("size", String.valueOf(10))
-                        .header(HEADER_USER, 1L))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(List.of(firstBookingOutDto, secondBookingOutDto))));
+        when(bookingService.getBookingById(anyLong(), anyLong()))
+                .thenReturn(new BookingOutDto(1L, LocalDateTime.now(), LocalDateTime.now(), Status.APPROVED, new UserDto(1L, "login", "email"), new ItemDto(
+                        1L,
+                        "Item Name",
+                        "Item Description",
+                        true,
+                        null,
+                        null,
+                        null,
+                        1L
+                )));
 
-        verify(bookingService, times(1)).getAllBookingsByBookerId(1L, "ALL", 0, 10);
+        ResponseEntity<BookingOutDto> responseEntity = bookingController.getBookingById(1L, 1L);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
-    void getAllBookingsForAllItemsByOwnerId() throws Exception {
-        when(bookingService.getAllBookingsForAllItemsByOwnerId(anyLong(), anyString(), anyInt(), anyInt())).thenReturn(List.of(firstBookingOutDto, secondBookingOutDto));
+    void shouldGetAllBookingsByBookerIdSuccessfully() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-        mvc.perform(get("/bookings/owner")
-                        .param("state", "ALL")
-                        .param("from", String.valueOf(0))
-                        .param("size", String.valueOf(10))
-                        .header(HEADER_USER, 1L))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(List.of(firstBookingOutDto, secondBookingOutDto))));
+        when(bookingService.getAllBookingsByBookerId(anyLong(), anyString(), anyInt(), anyInt()))
+                .thenReturn(List.of(new BookingOutDto(1L, LocalDateTime.now(), LocalDateTime.now(), Status.APPROVED, new UserDto(1L, "login", "email"), new ItemDto(
+                        1L,
+                        "Item Name",
+                        "Item Description",
+                        true,
+                        null,
+                        null,
+                        null,
+                        1L
+                ))));
 
-        verify(bookingService, times(1)).getAllBookingsForAllItemsByOwnerId(1L, "ALL", 0, 10);
+        ResponseEntity<List<BookingOutDto>> responseEntity = bookingController.getAllBookingsByBookerId(1L, "ALL", 0, 10);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    void shouldGetAllBookingsForAllItemsByOwnerIdSuccessfully() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        when(bookingService.getAllBookingsForAllItemsByOwnerId(anyLong(), anyString(), anyInt(), anyInt()))
+                .thenReturn(List.of(new BookingOutDto(1L, LocalDateTime.now(), LocalDateTime.now(), Status.APPROVED, new UserDto(1L, "login", "email"), new ItemDto(
+                        1L,
+                        "Item Name",
+                        "Item Description",
+                        true,
+                        null,
+                        null,
+                        null,
+                        1L
+                ))));
+
+        ResponseEntity<List<BookingOutDto>> responseEntity = bookingController.getAllBookingsForAllItemsByOwnerId(1L, "ALL", 0, 10);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 }

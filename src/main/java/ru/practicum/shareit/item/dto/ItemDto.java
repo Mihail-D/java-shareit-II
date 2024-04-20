@@ -34,4 +34,15 @@ public class ItemDto {
 
     @Positive(message = "must be positive")
     private Long requestId;
+
+    public ItemDto(Long id, String name, String description, Boolean available, BookingShortDto lastBooking, BookingShortDto nextBooking, List<CommentDto> comments, Long requestId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.lastBooking = lastBooking;
+        this.nextBooking = nextBooking;
+        this.comments = comments;
+        this.requestId = requestId;
+    }
 }
