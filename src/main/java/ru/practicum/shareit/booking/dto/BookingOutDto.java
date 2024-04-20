@@ -23,4 +23,13 @@ public class BookingOutDto {
     private UserDto booker;
 
     private ItemDto item;
+
+    public BookingOutDto(Long id, LocalDateTime start, LocalDateTime end, Status status, UserDto booker, ItemDto item) {
+        this.id = id;
+        this.start = start;
+        this.end = end;
+        this.status = status;
+        this.booker = booker;
+        this.item = item;
+    }
 }

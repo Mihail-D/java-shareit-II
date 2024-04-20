@@ -21,4 +21,10 @@ public class UserDto {
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Email must contain the character @")
     private String email;
+
+    public UserDto(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
 }
